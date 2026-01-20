@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TasteFusion - AI Recipe Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍳</text></svg>">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🍳</span>
+                <h1>TasteFusion</h1>
+            </div>
+            <p class="tagline">AI learns your taste. Creates your fusion.</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab active" data-tab="log">📝 Log Meals</button>
+            <button class="tab" data-tab="profile">👤 Taste Profile</button>
+            <button class="tab" data-tab="generate">✨ Generate Recipe</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Log Meals Tab -->
+            <section id="log" class="tab-content active">
+                <div class="section-header">
+                    <h2>Log Your Meals</h2>
+                    <p>Tell us what you eat at home and outside. We'll learn your taste!</p>
+                </div>
+
+                <form id="meal-form" class="meal-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="meal-name">Meal Name *</label>
+                            <input type="text" id="meal-name" placeholder="e.g., Butter Chicken" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cuisine">Cuisine *</label>
+                            <input type="text" id="cuisine" placeholder="e.g., Indian, Italian" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="meal-type">Where did you have this? *</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="meal-type" value="home" checked>
+                                    <span class="radio-label">🏠 Home</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="meal-type" value="outside">
+                                    <span class="radio-label">🍽️ Outside</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group" id="restaurant-group" style="display: none;">
+                            <label for="restaurant">Restaurant Name</label>
+                            <input type="text" id="restaurant" placeholder="e.g., Olive Garden">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ingredients">Main Ingredients</label>
+                        <input type="text" id="ingredients" placeholder="e.g., chicken, tomatoes, cream (comma separated)">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Flavor Profile</label>
+                        <div class="flavor-tags">
+                            <label class="flavor-tag"><input type="checkbox" value="spicy"><span>🌶️ Spicy</span></label>
+                            <label class="flavor-tag"><input type="checkbox" value="sweet"><span>🍯 Sweet</span></label>
+                            <label class="flavor-tag"><input type="checkbox" value="savory"><span>🧂 Savory</span></label>
+                            <label class="flavor-tag"><input type="checkbox" value="sour"><span>🍋 Sour</span></label>
+                            <label class="flavor-tag"><input type="checkbox" value="creamy"><span>🥛 Creamy</span></label>
+                            <label class="flavor-tag"><input type="checkbox" value="crunchy"><span>🥜 Crunchy</span></label>
+                            <label class="flavor-tag"><input type="checkbox" value="fresh"><span>🌿 Fresh</span></label>
+                            <label class="flavor-tag"><input type="checkbox" value="smoky"><span>🔥 Smoky</span></label>
+                            <label class="flavor-tag"><input type="checkbox" value="umami"><span>🍄 Umami</span></label>
+                            <label class="flavor-tag"><input type="checkbox" value="tangy"><span>🥭 Tangy</span></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Notes (optional)</label>
+                        <textarea id="notes" placeholder="Any special notes about this dish..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="btn-text">Add Meal</span>
+                        <span class="btn-loading" style="display: none;">Adding...</span>
+                    </button>
+                </form>
+
+                <div class="quick-actions">
+                    <button id="load-sample" class="btn btn-secondary">Load Sample Data (Demo)</button>
+                </div>
+
+                <!-- Meal History -->
+                <div class="meal-history">
+                    <h3>Your Meal History</h3>
+                    <div id="meals-list" class="meals-list">
+                        <p class="empty-state">No meals logged yet. Start adding your favorite dishes!</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Taste Profile Tab -->
+            <section id="profile" class="tab-content">
+                <div class="section-header">
+                    <h2>Your Taste Profile</h2>
+                    <p>We've analyzed your meal history to understand your preferences</p>
+                </div>
+
+                <div id="profile-content" class="profile-grid">
+                    <div class="profile-card">
+                        <div class="profile-icon">🍽️</div>
+                        <h3>Total Meals</h3>
+                        <p id="total-meals" class="profile-value">0</p>
+                    </div>
+                    <div class="profile-card">
+                        <div class="profile-icon">🏠</div>
+                        <h3>Home vs Outside</h3>
+                        <div id="home-ratio" class="ratio-bar">
+                            <div class="ratio-fill" style="width: 50%"></div>
+                        </div>
+                        <p class="ratio-label"><span id="home-percent">50%</span> home cooked</p>
+                    </div>
+                    <div class="profile-card wide">
+                        <div class="profile-icon">🌍</div>
+                        <h3>Favorite Cuisines</h3>
+                        <div id="fav-cuisines" class="tag-list">
+                            <span class="tag">Log meals to see</span>
+                        </div>
+                    </div>
+                    <div class="profile-card wide">
+                        <div class="profile-icon">😋</div>
+                        <h3>Preferred Flavors</h3>
+                        <div id="fav-flavors" class="tag-list">
+                            <span class="tag">Log meals to see</span>
+                        </div>
+                    </div>
+                    <div class="profile-card wide">
+                        <div class="profile-icon">🥗</div>
+                        <h3>Common Ingredients</h3>
+                        <div id="common-ingredients" class="tag-list">
+                            <span class="tag">Log meals to see</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Generate Recipe Tab -->
+            <section id="generate" class="tab-content">
+                <div class="section-header">
+                    <h2>Generate Fusion Recipe</h2>
+                    <p>Let AI create a unique recipe tailored to your taste preferences</p>
+                </div>
+
+                <form id="generate-form" class="generate-form">
+                    <div class="form-group">
+                        <label for="fusion-style">Fusion Style (optional)</label>
+                        <input type="text" id="fusion-style" placeholder="e.g., Indian-Italian, Mexican-Thai">
+                        <span class="hint">Leave empty for AI to decide based on your taste</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="difficulty">Difficulty Level</label>
+                            <select id="difficulty">
+                                <option value="easy">🟢 Easy</option>
+                                <option value="medium" selected>🟡 Medium</option>
+                                <option value="hard">🔴 Hard</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cooking-time">Max Cooking Time (minutes)</label>
+                            <input type="number" id="cooking-time" placeholder="e.g., 30" min="5" max="180">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dietary Restrictions</label>
+                        <div class="diet-tags">
+                            <label class="diet-tag"><input type="checkbox" value="vegetarian"><span>🥬 Vegetarian</span></label>
+                            <label class="diet-tag"><input type="checkbox" value="vegan"><span>🌱 Vegan</span></label>
+                            <label class="diet-tag"><input type="checkbox" value="gluten-free"><span>🌾 Gluten-Free</span></label>
+                            <label class="diet-tag"><input type="checkbox" value="dairy-free"><span>🥛 Dairy-Free</span></label>
+                            <label class="diet-tag"><input type="checkbox" value="nut-free"><span>🥜 Nut-Free</span></label>
+                            <label class="diet-tag"><input type="checkbox" value="low-carb"><span>🍞 Low-Carb</span></label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-generate">
+                        <span class="btn-text">✨ Generate My Fusion Recipe</span>
+                        <span class="btn-loading" style="display: none;">
+                            <span class="spinner"></span> AI is cooking...
+                        </span>
+                    </button>
+                </form>
+
+                <!-- Recipe Result -->
+                <div id="recipe-result" class="recipe-result" style="display: none;">
+                    <div class="recipe-card">
+                        <div class="recipe-header">
+                            <h2 id="recipe-name">Recipe Name</h2>
+                            <p id="recipe-description" class="recipe-description"></p>
+                        </div>
+                        
+                        <div class="recipe-meta">
+                            <div class="meta-item">
+                                <span class="meta-icon">⏱️</span>
+                                <span>Prep: <strong id="prep-time">0</strong> min</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-icon">🍳</span>
+                                <span>Cook: <strong id="cook-time">0</strong> min</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="meta-icon">📊</span>
+                                <span>Difficulty: <strong id="recipe-difficulty">Medium</strong></span>
+                            </div>
+                        </div>
+
+                        <div class="recipe-fusion">
+                            <h4>🌍 Fusion of</h4>
+                            <div id="fusion-of" class="fusion-tags"></div>
+                        </div>
+
+                        <div class="recipe-section">
+                            <h4>🥗 Ingredients</h4>
+                            <ul id="recipe-ingredients" class="ingredients-list"></ul>
+                        </div>
+
+                        <div class="recipe-section">
+                            <h4>👨‍🍳 Instructions</h4>
+                            <ol id="recipe-instructions" class="instructions-list"></ol>
+                        </div>
+
+                        <div class="recipe-section flavor-section">
+                            <h4>😋 Flavor Profile</h4>
+                            <div id="recipe-flavors" class="flavor-list"></div>
+                        </div>
+
+                        <div class="recipe-why">
+                            <h4>💜 Why You'll Love This</h4>
+                            <p id="why-love"></p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Built with ❤️ using Pydantic AI | TasteFusion © 2026</p>
+        </footer>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

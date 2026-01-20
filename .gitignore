@@ -1,0 +1,16 @@
+# TasteFusion Project
+
+# Backend
+backend/.env
+backend/__pycache__/
+backend/*.pyc
+backend/venv/
+backend/.venv/
+
+# Frontend (none needed, static files)
+
+# General
+.DS_Store
+*.log
+.vscode/
+.idea/
