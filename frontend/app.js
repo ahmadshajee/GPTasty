@@ -4,9 +4,7 @@
  */
 
 // ============== Configuration ==============
-const API_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:8000' 
-    : 'https://your-backend-url.railway.app'; // Update after deployment
+const API_URL = 'https://gptasty.onrender.com';
 
 // ============== State ==============
 let meals = [];
